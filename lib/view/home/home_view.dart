@@ -12,24 +12,29 @@ import 'package:login/view_models/Controller/home/home_view_model.dart';
 import 'package:login/view_models/Controller/user_preference/user_preference_view_model.dart';
 
 class HomeView extends StatefulWidget {
-  const HomeView({super.key});
+  const HomeView({Key? key}) : super(key: key);
 
   @override
   State<HomeView> createState() => _HomeViewState();
 }
 
 class _HomeViewState extends State<HomeView> {
-  final homeController = Get.put(HomeViewModel());
+
+  final homeController = Get.put(HomeController());
+
   UserPreference userPreference = UserPreference();
+
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     homeController.userListApi();
+
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return  Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         actions: [
@@ -37,45 +42,41 @@ class _HomeViewState extends State<HomeView> {
             userPreference.removeUser().then((value){
               Get.toNamed(RoutesName.loginScreen);
             });
-          },
-              icon: Icon(Icons.logout)
-          ),
+          }, icon: const Icon(Icons.logout))
         ],
       ),
-      body: Obx(() {
-        switch(homeController.rxRequest.value){
+      body: Obx((){
+        switch(homeController.rxRequestStatus.value){
           case Status.LOADING:
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           case Status.ERROR:
-            if(homeController.error.value== 'No Internet')
-              {
-                return InternetExceptionWidget(onPress: (){
-                  homeController.refreshApi();
-                });
-              }
-            else{
-              return GeneralExceptionWidget(onPress: () {
+            if(homeController.error.value =='No internet'){
+              return InternetExceptionWidget(onPress: () {
                 homeController.refreshApi();
               },);
+            }else {
+              return GeneralExceptionWidget(onPress: (){
+                homeController.refreshApi();
+              });
             }
-            return Text(homeController.error.toString());
           case Status.COMPLETED:
             return ListView.builder(
                 itemCount: homeController.userList.value.data!.length,
-                itemBuilder: (context,index){
-              Card(
-                child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: NetworkImage(homeController.userList.value.data![index].avatar.toString()),
-                  ),
-                  title: Text(homeController.userList.value.data![index].firstName.toString()),
-                  subtitle: Text(homeController.userList.value.data![index].email.toString()),
-                ),
-              );
-            });
+                itemBuilder: (context, index){
+                  return Card(
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage: NetworkImage(homeController.userList.value.data![index].avatar.toString()),
+                      ),
+                      title: Text(homeController.userList.value.data![index].firstName.toString()),
+                      subtitle: Text(homeController.userList.value.data![index].email.toString()),
+
+                    ),
+                  );
+                }
+            );
         }
       }),
-
     );
   }
 }

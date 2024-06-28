@@ -1,7 +1,7 @@
 class UserListModel {
   int? page;
   int? perPage;
-  var total;
+  int? total;
   int? totalPages;
   List<Data>? data;
   Support? support;
