@@ -28,7 +28,12 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.teal,
-      body: Center(child: Text('welcome_back'.tr,textAlign: TextAlign.center,),),
+      body: Center(
+        child: Text(
+          'welcome_back'.tr,
+          textAlign: TextAlign.center,
+        ),
+      ),
     );
   }
 }
