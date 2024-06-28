@@ -42,7 +42,7 @@ class NetworkApiServices extends BaseApiServices
     }
     try{
       final response =await http.post(Uri.parse(url),
-      body: jsonEncode(data)
+      body: data
       ).timeout(const Duration(seconds: 10));
       responseJson= returnResponse(response);
 
@@ -51,6 +51,11 @@ class NetworkApiServices extends BaseApiServices
     }on RequestTimeout{
       throw RequestTimeout('');
     }
+    if(kDebugMode)
+      {
+        print(responseJson);
+      }
+
     return responseJson;
 
 
@@ -66,7 +71,8 @@ class NetworkApiServices extends BaseApiServices
         return responseJson;
         
       case 400:
-        throw InvalidUrl;
+        dynamic responseJson = jsonDecode(response.body);
+        return responseJson;
       default :
         throw FetchDataException('Error occured while Communication'+ response.statusCode.toString());
     }
